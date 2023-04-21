@@ -1,30 +1,36 @@
 
-import { Component } from "react";
+import { useState } from "react";
 import { FeedbackOptions } from "./FeedbackOptions/FeedbackOptions";
 import { Section } from "./Section/Section";
 import { Statistics } from "./Statistics/statistics";
 import {Notification } from "./Notification/Notification"
 
-export class App extends Component {
-  state = {
-    good: 0,
-    neutral: 0,
-    bad: 0
-  }
-  handleClickIncrement = (type) =>
-    this.setState((prevState) => ({
-      [type]: prevState[type] + 1,
-    }))
-  countTotalFeedback() {
-    return this.state.bad + this.state.good + this.state.neutral
-  }
-  countPositiveFeedbackPercentage() {
-    return (this.state.good / this.countTotalFeedback()) * 100
-  }
-  
-  render() {
 
-    const { good, bad, neutral } = this.state
+
+
+export const App = () => {
+  const [good, setGood] = useState(0)
+  const [neutral, setNeutral] = useState(0)
+  const [bad, setBad] = useState(0)
+
+  const handleClick = (e) => { 
+    console.log(e.target.name)
+    if (e.target.name === 'good') { 
+      setGood(good + 1)
+    } else if (e.target.name === 'neutral') { 
+      setNeutral(neutral + 1)
+    }
+      else if (e.target.name === 'bad') { 
+      setBad(bad + 1)
+    }
+  }
+  function countTotalFeedback() {
+    const total = bad + good + neutral
+    return total
+  }
+ function countPositiveFeedbackPercentage() {
+    return (good /countTotalFeedback()) * 100
+  }
 
     return (
       <div
@@ -35,21 +41,21 @@ export class App extends Component {
         }}
       >
         <Section title="Please Leave Feedback" >
-          <FeedbackOptions handleClickIncrement={this.handleClickIncrement} />
+          <FeedbackOptions handleClick={handleClick} />
         </Section>
         <Section title="Statistics">
-          {this.countTotalFeedback() === 0 ? (<Notification message="There is no feedback" />) : (
+          {countTotalFeedback() === 0 ? (<Notification message="There is no feedback" />) : (
             <Statistics
               bad={bad}
               good={good}
               neutral={neutral}
-              total={this.countTotalFeedback()}
-              percent={this.countPositiveFeedbackPercentage()}
+              total={countTotalFeedback()}
+              percent={countPositiveFeedbackPercentage()}
             />)}
         </Section>
       </div>
     );
   }
-}
+
 
 export default App
